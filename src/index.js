@@ -20,11 +20,15 @@ async function getCancelledVideos() {
     logger.info(`Checking to see if any videos haven't been uploaded to YouTube yet...`);
 
     for (const uploading of TwitchArchive.videoData.uploading) {
+        if (TwitchArchive.videoData.uploaded.filter(a => a.id == uploading.id).length == 0)
+            continue;
+
         uploader.upload({
             title: uploading.title,
             description: uploading.description,
             twitchLogin: uploading.login,
-            path: uploading.path
+            path: uploading.path,
+            id: uploading.id
         });
     }
 }

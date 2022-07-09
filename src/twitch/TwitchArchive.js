@@ -89,7 +89,8 @@ module.exports = class TwitchArchive extends EventEmitter {
             path: transcode.filePath,
             title,
             description,
-            twitchLogin: this.channel.login
+            twitchLogin: this.channel.login,
+            id: video.id
         });
 
         TwitchArchive.videoData.uploading.push({
