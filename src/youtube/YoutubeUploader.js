@@ -16,6 +16,7 @@ const logger = new Logger('YoutubeUploader');
 module.exports = class YoutubeUploader {
     async upload(data) {
         const token = await this.authorize(data.twitchLogin);
+        logger.info(`Uploading to YouTube: ${data.title}`);
 
         const service = google.youtube('v3');
 
