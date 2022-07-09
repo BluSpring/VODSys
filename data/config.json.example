@@ -1,0 +1,17 @@
+{
+    "twitch": {
+        "client_id": "",
+        "client_secret": ""
+    },
+    "youtube": {
+        "client_id": "",
+        "client_secret": ""
+    },
+
+    "channels": [
+        {
+            "id": 487456338,
+            "login": "wookuz"
+        }
+    ]
+}

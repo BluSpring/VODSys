@@ -1,0 +1,13 @@
+{
+  "name": "vodsys",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "chalk": "4",
+    "googleapis": "^105.0.0",
+    "twitch-video-downloader": "^1.6.3",
+    "ws": "^8.8.0"
+  }
+}

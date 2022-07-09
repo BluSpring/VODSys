@@ -1,0 +1,14 @@
+Streamed on Twitch at https://twitch.tv/bluspring
+
+Stream Date: {broadcastDate}
+Category: {twitchCategory}
+
+You can find BluSpring here:
+ = Website : https://bluspring.xyz
+ = Twitter : https://twitter.com/BIuSpring
+ = Twitch : https://twitch.tv/bluspring
+
+-----
+
+This stream archive is automatically uploaded, trying to be uploaded as soon as BluSpring finishes his stream.
+You may find the source code here: https://github.com/BluSpring/VODSys

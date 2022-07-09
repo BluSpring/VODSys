@@ -1,0 +1,13 @@
+Streamed live to Twitch on {broadcastDate}
+
+Category: {twitchCategory}
+
+You can find Wookuz here:
+ = Twitch = https://twitch.tv/Wookuz
+ = Twitter = https://twitter.com/Wookuz
+ = Discord = https://discord.gg/eNczzSW4P6
+
+-----
+
+This stream archive is automatically uploaded, trying to be uploaded as soon as Wookuz finishes his stream.
+You may find the source code here: https://github.com/BluSpring/VODSys
