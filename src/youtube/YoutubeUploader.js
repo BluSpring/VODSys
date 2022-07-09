@@ -5,6 +5,7 @@ const { google } = require('googleapis');
 const { OAuth2Client } = require('google-auth-library');
 const Logger = require('../util/Logger');
 const OAuth2 = google.auth.OAuth2;
+const path = require('path');
 
 // Category IDs: https://gist.github.com/dgp/1b24bf2961521bd75d6c
 const category = 20; // Gaming
@@ -41,6 +42,8 @@ module.exports = class YoutubeUploader {
                     body: fs.createReadStream(data.path)
                 }
             });
+
+            fs.rmSync(path.join(data.path, '../../'), { recursive: true, force: true });
 
             logger.info(`Successfully uploaded video "${data.title}" (${data.twitchLogin})! URL: https://youtube.com/watch?v=${response.data.id}`);
         } catch (e) {
