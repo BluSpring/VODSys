@@ -14,6 +14,8 @@ const SCOPES = ['https://www.googleapis.com/auth/youtube.upload'];
 
 const logger = new Logger('YoutubeUploader');
 
+const config = require('../../data/config.json');
+
 module.exports = class YoutubeUploader {
     async upload(data) {
         const token = await this.authorize(data.twitchLogin);
@@ -53,16 +55,12 @@ module.exports = class YoutubeUploader {
     }
 
     async authorize(twitchLogin) {
-        if (!fs.existsSync(`./data/client_secrets.json`)) {
-            throw Error(`Failed to find client_secrets.json!`);
-        }
-
         const credentials = JSON.parse(fs.readFileSync(`./data/client_secrets.json`));
 
         const oauth2Client = new OAuth2(
-            credentials.installed.client_id,
-            credentials.installed.client_secret,
-            credentials.installed.redirect_uris[0]
+            credentials.web.client_id,
+            credentials.web.client_secret,
+            credentials.web.redirect_uris[0]
         );
 
         try {
