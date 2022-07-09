@@ -38,7 +38,7 @@ module.exports = class TwitchArchive extends EventEmitter {
     }
 
     async downloadArchive(video) {
-        logger.info(`[${video.id}] Downloading archive "${video.title} for user ${this.channel.login}."`);
+        logger.info(`[${video.id}] Downloading archive "${video.title}" for user ${this.channel.login}.`);
 
         TwitchArchive.downloading.push(video.id);
 
