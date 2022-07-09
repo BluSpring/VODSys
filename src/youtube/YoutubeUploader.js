@@ -46,7 +46,7 @@ module.exports = class YoutubeUploader {
                 }
             });
 
-            fs.rmSync(path.join(data.path, '../'), { recursive: true, force: true });
+            fs.rmSync(path.join(data.path, '../../'), { recursive: true, force: true });
 
             TwitchArchive.videoData.uploaded.push({
                 id: data.id,
