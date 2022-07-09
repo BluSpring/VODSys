@@ -29,8 +29,8 @@ module.exports = class YoutubeUploader {
                 part: 'snippet,status',
                 requestBody: {
                     snippet: {
-                        title,
-                        description,
+                        title: data.title,
+                        description: data.description,
                         tags: ['vod', 'twitch', 'stream', 'game'],
                         categoryId: category,
                         defaultLanguage: 'en',
