@@ -19,14 +19,14 @@ const TwitchArchive = require('../twitch/TwitchArchive');
 
 module.exports = class YoutubeUploader {
     async upload(data) {
-        const token = await this.authorize(data.twitchLogin);
+        const oauth2Client = await this.authorize(data.twitchLogin);
         logger.info(`Uploading to YouTube: ${data.title}`);
 
         const service = google.youtube('v3');
 
         try {
             const response = await service.videos.insert({
-                auth: token,
+                auth: oauth2Client,
                 part: 'snippet,status',
                 requestBody: {
                     snippet: {
@@ -74,11 +74,15 @@ module.exports = class YoutubeUploader {
         );
 
         try {
-            const oldToken = await fs.promises.readFile(`./data/${twitchLogin}.client_oauth_token.json`);
+            const oldToken = (await fs.promises.readFile(`./data/${twitchLogin}.client_oauth_token.json`)).toString();
 
-            return oldToken;
+            oauth2Client.setCredentials(JSON.parse(oldToken).tokens);
+
+            return oauth2Client;
         } catch (e) {
-            return await this.getNewToken(twitchLogin, oauth2Client);
+            await this.getNewToken(twitchLogin, oauth2Client);
+
+            return oauth2Client;
         }
     }
 
@@ -107,7 +111,7 @@ module.exports = class YoutubeUploader {
                 try {
                     const token = await oauth2Client.getToken(code);
 
-                    oauth2Client.credentials = token;
+                    oauth2Client.setCredentials(token.tokens);
 
                     fs.writeFileSync(`./data/${twitchLogin}.client_oauth_token.json`, JSON.stringify(token, null, 4));
 
