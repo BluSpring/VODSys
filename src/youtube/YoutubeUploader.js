@@ -10,7 +10,7 @@ const path = require('path');
 // Category IDs: https://gist.github.com/dgp/1b24bf2961521bd75d6c
 const category = 20; // Gaming
 
-const SCOPES = ['https://www.googleapis.com/auth/youtube.upload'];
+const SCOPES = ['https://www.googleapis.com/auth/youtube.upload', 'https://www.googleapis.com/auth/youtube'];
 
 const logger = new Logger('YoutubeUploader');
 
@@ -45,7 +45,7 @@ module.exports = class YoutubeUploader {
                 }
             });
 
-            fs.rmSync(path.join(data.path, '../../'), { recursive: true, force: true });
+            fs.rmSync(path.join(data.path, '../'), { recursive: true, force: true });
 
             logger.info(`Successfully uploaded video "${data.title}" (${data.twitchLogin})! URL: https://youtube.com/watch?v=${response.data.id}`);
         } catch (e) {
