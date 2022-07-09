@@ -16,11 +16,30 @@ process.on('unhandledRejection', (err) => {
 
 const uploader = new YoutubeUploader();
 
+async function getCancelledVideos() {
+    logger.info(`Checking to see if any videos haven't been uploaded to YouTube yet...`);
+
+    for (const uploading of TwitchArchive.videoData.uploading) {
+        uploader.upload({
+            title: uploading.title,
+            description: uploading.description,
+            twitchLogin: uploading.login,
+            path: uploading.path
+        });
+    }
+}
+
 (async () => {
+    logger.info(`Preparing to check for live streams...`);
+
     const auth = new TwitchAuth();
 
     // Get token first before everyone else
     await auth.getToken();
+
+    logger.info(`Retrieved token from Twitch!`);
+
+    getCancelledVideos();
 
     for (const channel of config.channels) {
         const archive = new TwitchArchive(channel);
@@ -36,6 +55,8 @@ const uploader = new YoutubeUploader();
         archive.on('archive', (archive) => {
             uploader.upload(archive);
         });
+
+        logger.info(`Registered check for Twitch channel ${channel.login}!`);
 
         try {
             archive.checkArchives();

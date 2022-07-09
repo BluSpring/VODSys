@@ -5,7 +5,6 @@ const fs = require('fs');
 const Logger = require("../util/Logger");
 const path = require('path');
 
-const uploaded = fs.existsSync('./data/uploaded.txt') ? fs.readFileSync('./data/uploaded.txt').toString().split('\n') : [];
 const logger = new Logger('TwitchArchive');
 
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -13,10 +12,25 @@ const monthNames = ["January", "February", "March", "April", "May", "June", "Jul
 module.exports = class TwitchArchive extends EventEmitter {
     static downloading = [];
 
+    /**
+     * @type {{
+     *  uploaded: {id: string, login: string}[],
+     *  uploading: {id: string, login: string, title: string, description: string, path: string}[]
+     * }}
+     */
+    static videoData = fs.existsSync('./data/videos.json') ? require('../../data/videos.json') : {
+        uploaded: [],
+        uploading: []
+    };
+
+    static saveVideoData() {
+        fs.writeFileSync('./data/videos.json', JSON.stringify(TwitchArchive.videoData, null, 4));
+    }
+
     constructor(channel) {
         super();
         this.channel = channel;
-        this.description = fs.existsSync(`./data/${this.channel.login}.description.txt`) ? fs.readFileSync(`./data/${this.channel.login}.description.txt`).toString() : `Uploaded using VODSys\nhttps://github.com/BluSpring/VODSys`;
+        this.description = fs.existsSync(`./data/${this.channel.login}.description.txt`) ? fs.readFileSync(`./data/${this.channel.login}.description.txt`).toString() : `uploading using VODSys\nhttps://github.com/BluSpring/VODSys`;
     }
 
     async checkArchives() {
@@ -29,7 +43,11 @@ module.exports = class TwitchArchive extends EventEmitter {
 
             if (videos.length > 0) {
                 for (const video of videos) {
-                    if (!uploaded.includes(video.id) && !TwitchArchive.downloading.includes(video.id)) {
+                    if (
+                        TwitchArchive.videoData.uploading.filter(a => a.id == video.id).length == 0 && 
+                        TwitchArchive.videoData.uploaded.filter(a => a.id == video.id).length == 0 && 
+                        !TwitchArchive.downloading.includes(video.id)
+                    ) {
                         this.downloadArchive(video);
                     }
                 }
@@ -62,17 +80,26 @@ module.exports = class TwitchArchive extends EventEmitter {
 
         const date = new Date(video.created_at);
 
+        const title = `${video.title} - [ STREAM ARCHIVE ]`;
+        const description = this.description
+            .replace(/{broadcastDate}/g, `${toOrdinal(date.getDate())} ${monthNames[date.getMonth()]} ${date.getFullYear()}`)
+            .replace(/{twitchCategory}/g, '(unavailable due to Twitch not providing data)');
+
         this.emit('archive', {
             path: transcode.filePath,
-            title: `${video.title} - [ STREAM ARCHIVE ]`,
-            description: this.description
-                            .replace(/{broadcastDate}/g, `${toOrdinal(date.getDate())} ${monthNames[date.getMonth()]} ${date.getFullYear()}`)
-                            .replace(/{twitchCategory}/g, '(unavailable due to Twitch not providing data)'),
+            title,
+            description,
             twitchLogin: this.channel.login
         });
 
-        uploaded.push(video.id);
-        fs.writeFileSync('./data/uploaded.txt', uploaded.join('\n'));
+        TwitchArchive.videoData.uploading.push({
+            id: video.id,
+            title: title,
+            description: description,
+            login: this.channel.login,
+            path: transcode.filePath
+        });
+        TwitchArchive.saveVideoData();
     }
 }
 

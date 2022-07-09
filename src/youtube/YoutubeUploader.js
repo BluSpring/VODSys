@@ -15,6 +15,7 @@ const SCOPES = ['https://www.googleapis.com/auth/youtube.upload', 'https://www.g
 const logger = new Logger('YoutubeUploader');
 
 const config = require('../../data/config.json');
+const TwitchArchive = require('../twitch/TwitchArchive');
 
 module.exports = class YoutubeUploader {
     async upload(data) {
@@ -46,6 +47,15 @@ module.exports = class YoutubeUploader {
             });
 
             fs.rmSync(path.join(data.path, '../'), { recursive: true, force: true });
+
+            TwitchArchive.videoData.uploaded.push({
+                id: data.id,
+                login: data.twitchLogin
+            });
+
+            TwitchArchive.videoData.uploading = TwitchArchive.videoData.uploading.filter(v => v.id !== data.id);
+
+            TwitchArchive.saveVideoData();
 
             logger.info(`Successfully uploaded video "${data.title}" (${data.twitchLogin})! URL: https://youtube.com/watch?v=${response.data.id}`);
         } catch (e) {
