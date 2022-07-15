@@ -45,12 +45,18 @@ async function getCancelledVideos() {
 
     getCancelledVideos();
 
+    setInterval(() => {
+        TwitchLiveChecker.check();
+    }, 1000 * 60 * 5);
+
     for (const channel of config.channels) {
         const archive = new TwitchArchive(channel);
+        new TwitchLiveChecker(channel);
 
         setInterval(async () => {
             try {
-                archive.checkArchives();
+                if (!TwitchLiveChecker.live.includes(channel.login))
+                    archive.checkArchives();
             } catch (e) {
                 logger.error('An error occurred while checking archives:', e.stack);
             }
@@ -61,11 +67,7 @@ async function getCancelledVideos() {
         });
 
         logger.info(`Registered check for Twitch channel ${channel.login}!`);
-
-        try {
-            archive.checkArchives();
-        } catch (e) {
-            logger.error('An error occurred while checking archives:', e.stack);
-        }
     }
+
+    TwitchLiveChecker.check();
 })();

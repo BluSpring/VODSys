@@ -14,6 +14,10 @@ module.exports = class TwitchLiveChecker extends EventEmitter {
      */
     static channels = [];
 
+    /**
+     * 
+     * @returns {string[]}
+     */
     static getCachedLiveStreams() {
         const file = './data/live.json';
 
@@ -22,7 +26,7 @@ module.exports = class TwitchLiveChecker extends EventEmitter {
             return JSON.parse(data);
         }
 
-        return {};
+        return [];
     }
 
     constructor(channel) {
@@ -35,21 +39,26 @@ module.exports = class TwitchLiveChecker extends EventEmitter {
     static async check() {
         const data = await this.streamData();
 
+        let livePeople = [];
+
         if (data) {
             const live = data.data.filter(d => d.type === 'live');
 
             if (live.length > 0) {
-                logger.info(`${live.length} streams are live!`);
 
                 for (const stream of live) {
                     const channel = TwitchLiveChecker.channels.find(c => c.channel.login === stream.user_login);
 
-                    if (channel) {
-                        channel.emit('live', stream);
+                    if (channel && !TwitchLiveChecker.live.includes(stream.user_login)) {
+                        TwitchLiveChecker.live.push(stream.user_login);
+                        livePeople.push(stream.user_login);
                     }
                 }
             }
         }
+
+        TwitchLiveChecker.live = TwitchLiveChecker.live.filter(a => livePeople.includes(a));
+        fs.writeFileSync('./data/live.json', JSON.stringify(TwitchLiveChecker.live, null, 4));
     }
 
     static async streamData() {
