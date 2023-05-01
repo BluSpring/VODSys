@@ -33,6 +33,20 @@ async function getCancelledVideos() {
     }
 }
 
+async function refreshGoogleTokens(channel) {
+    // Make sure everyone's logged in
+    const authClient = (await uploader.authorize(channel.login));
+
+    try {
+        if (!!authClient && !!(await authClient.getAccessToken())) {
+            logger.info(`Using previous YouTube access token for ${channel.login}`);
+        }
+    } catch (e) {
+        logger.info(`${channel.login}'s YouTube access token requires reauthentication!`);
+        await uploader.getNewToken(channel.login, authClient);
+    }
+}
+
 (async () => {
     logger.info(`Preparing to check for live streams...`);
 
@@ -53,6 +67,8 @@ async function getCancelledVideos() {
         const archive = new TwitchArchive(channel);
         new TwitchLiveChecker(channel);
 
+        await refreshGoogleTokens(channel);
+
         setInterval(async () => {
             try {
                 if (!TwitchLiveChecker.live.includes(channel.login))
@@ -61,6 +77,11 @@ async function getCancelledVideos() {
                 logger.error('An error occurred while checking archives:', e.stack);
             }
         }, 1000 * 60 * 5);
+
+        // Periodically refresh the Google auth tokens
+        setInterval(async () => {
+            await refreshGoogleTokens(channel);
+        }, 6 * 60 * 60 * 1000);
 
         archive.on('archive', (archive) => {
             uploader.upload(archive);
