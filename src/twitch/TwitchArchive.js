@@ -39,7 +39,11 @@ module.exports = class TwitchArchive extends EventEmitter {
         const data = await TwitchRest.get(url);
 
         if (data) {
-            const videos = data.data.filter(d => d.type === "archive");
+            const videos = data.data.filter(d => 
+                d.type === "archive" 
+                &&
+                (Date.now() - new Date(d.published_at).getTime() >= 1 * 24 * 60 * 60 * 1000)
+            );
 
             if (videos.length > 0) {
                 for (const video of videos) {
