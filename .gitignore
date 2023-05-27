@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 data/archives/
 config.json
 token.json
@@ -8,12 +7,3 @@ node_modules/
 videos.json
 live.json
 *.description.txt
-=======
-data/archives/
-config.json
-token.json
-*.client_oauth_token.json
-client_secrets.json
-node_modules/
-videos.json
->>>>>>> 69b0511 (wait what did i put here)
