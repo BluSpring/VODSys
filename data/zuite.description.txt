@@ -1,0 +1,18 @@
+Streamed on Twitch at https://twitch.tv/zuite
+
+Stream Date: {broadcastDate}
+
+~
+
+FOLLOW ME ON THESE PLATFORMS! 
+TWITCH: https://www.twitch.tv/zuite 
+TWITTER: https://twitter.com/Zuite_ 
+TIKTOK: https://www.tiktok.com/@zuite_ 
+
+JOIN THE DISCORD!
+https://discord.gg/QJaTSbKbUk
+
+~
+
+This stream archive is automatically uploaded, 24 hours after Zuite finishes her stream.
+You may find the source code here: https://github.com/BluSpring/VODSys
