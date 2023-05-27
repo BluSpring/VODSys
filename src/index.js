@@ -10,6 +10,8 @@ const YoutubeUploader = require('./youtube/YoutubeUploader');
 
 const logger = new Logger('VODSys');
 
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
 process.on('unhandledRejection', (err) => {
     logger.error('An uncaught error occurred:', err);
 });
@@ -33,7 +35,7 @@ async function getCancelledVideos() {
     }
 }
 
-async function refreshGoogleTokens(channel) {
+async function refreshGoogleTokens(channel, attempts = 0) {
     // Make sure everyone's logged in
     const authClient = (await uploader.authorize(channel.login));
 
@@ -42,8 +44,14 @@ async function refreshGoogleTokens(channel) {
             logger.info(`Using previous YouTube access token for ${channel.login}`);
         }
     } catch (e) {
-        logger.info(`${channel.login}'s YouTube access token requires reauthentication!`);
-        await uploader.getNewToken(channel.login, authClient);
+        if (attempts >= 5) {
+            logger.info(`${channel.login}'s YouTube access token requires reauthentication!`);
+            await uploader.getNewToken(channel.login, authClient);
+        } else {
+            console.log(`Failed to re-auth, waiting 30s... (attempt ${attempts + 1})`);
+            await sleep(30_000);
+            await refreshGoogleTokens(channel, ++attempts);
+        }
     }
 }
 
