@@ -104,6 +104,8 @@ module.exports = class YoutubeUploader {
                 scope: SCOPES
             });
 
+            logger.info(`Log in for ${twitchLogin}`);
+
             logger.info(`Authorize this app by visiting this URL: ${authUrl}`);
 
             const rl = readline.createInterface({
