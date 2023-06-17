@@ -76,11 +76,17 @@ module.exports = class YoutubeUploader {
         try {
             const oldToken = (await fs.promises.readFile(`./data/${twitchLogin}.client_oauth_token.json`)).toString();
 
-            oauth2Client.setCredentials(JSON.parse(oldToken).tokens);
+            oauth2Client.setCredentials(JSON.parse(oldToken));
+            fs.writeFileSync(`./data/${twitchLogin}.client_oauth_token.json`, JSON.stringify(tokens, null, 4));
 
             return oauth2Client;
         } catch (e) {
-            await this.getNewToken(twitchLogin, oauth2Client);
+            try {
+                const tokens = await oauth2Client.refreshAccessToken();
+                fs.writeFileSync(`./data/${twitchLogin}.client_oauth_token.json`, JSON.stringify(tokens, null, 4));
+            } catch (e2) {
+                await this.getNewToken(twitchLogin, oauth2Client);
+            }
 
             return oauth2Client;
         }
@@ -112,8 +118,7 @@ module.exports = class YoutubeUploader {
                     const token = await oauth2Client.getToken(code);
 
                     oauth2Client.setCredentials(token.tokens);
-
-                    fs.writeFileSync(`./data/${twitchLogin}.client_oauth_token.json`, JSON.stringify(token, null, 4));
+                    fs.writeFileSync(`./data/${twitchLogin}.client_oauth_token.json`, JSON.stringify(token.tokens, null, 4));
 
                     resolve(token);
                 } catch (e) {
