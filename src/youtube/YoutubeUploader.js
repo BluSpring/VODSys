@@ -77,10 +77,12 @@ module.exports = class YoutubeUploader {
             const oldToken = (await fs.promises.readFile(`./data/${twitchLogin}.client_oauth_token.json`)).toString();
 
             oauth2Client.setCredentials(JSON.parse(oldToken));
+            await oauth2Client.getAccessToken();
             fs.writeFileSync(`./data/${twitchLogin}.client_oauth_token.json`, JSON.stringify(tokens, null, 4));
 
             return oauth2Client;
         } catch (e) {
+            console.error(e.stack);
             try {
                 const tokens = await oauth2Client.refreshAccessToken();
                 fs.writeFileSync(`./data/${twitchLogin}.client_oauth_token.json`, JSON.stringify(tokens, null, 4));
