@@ -84,10 +84,16 @@ module.exports = class TwitchArchive extends EventEmitter {
 
         const date = new Date(video.created_at);
 
-        const title = `${video.title} - [ STREAM ARCHIVE ]`;
+        let title = `${video.title} - [ STREAM ARCHIVE ]`;
+
         const description = this.description
             .replace(/{broadcastDate}/g, `${toOrdinal(date.getDate())} ${monthNames[date.getMonth()]} ${date.getFullYear()}`)
             .replace(/{twitchCategory}/g, '(unavailable due to Twitch not providing data)');
+
+        if (title.length > 100) {
+            title = `${video.title.substr(0, title.length - 100 - ' - [ STREAM ARCHIVE ]'.length - 6)}... - [ STREAM ARCHIVE ]`;
+            description += `\nOriginal title: ${video.title}`;
+        }
 
         this.emit('archive', {
             path: transcode.filePath,

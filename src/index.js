@@ -13,7 +13,7 @@ const logger = new Logger('VODSys');
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 process.on('unhandledRejection', (err) => {
-    logger.error('An uncaught error occurred:', err);
+    logger.error('An uncaught error occurred:', err.stack ?? err);
 });
 
 const uploader = new YoutubeUploader();
