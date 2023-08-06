@@ -86,7 +86,7 @@ module.exports = class TwitchArchive extends EventEmitter {
 
         let title = `${video.title} - [ STREAM ARCHIVE ]`;
 
-        const description = this.description
+        let description = this.description
             .replace(/{broadcastDate}/g, `${toOrdinal(date.getDate())} ${monthNames[date.getMonth()]} ${date.getFullYear()}`)
             .replace(/{twitchCategory}/g, '(unavailable due to Twitch not providing data)');
 
