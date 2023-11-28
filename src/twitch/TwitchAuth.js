@@ -18,7 +18,7 @@ module.exports = class TwitchAuth {
      *  expiresOn: number
      * }}
      */
-    static tokenData = fs.existsSync('./data/token.json') ? JSON.parse(fs.readFileSync('./data/token.json')) : null;
+    static tokenData = fs.existsSync(`${config.paths.data}/token.json`) ? JSON.parse(fs.readFileSync(`${config.paths.data}/token.json`)) : null;
     static clientId = config.twitch.client_id;
 
     /**
@@ -80,7 +80,7 @@ module.exports = class TwitchAuth {
             expiresOn: Date.now() + (data.expires_in * 1000)
         };
 
-        fs.writeFileSync('./data/token.json', JSON.stringify(TwitchAuth.tokenData, null, 4));
+        fs.writeFileSync(`${config.paths.data}/token.json`, JSON.stringify(TwitchAuth.tokenData, null, 4));
 
         // Need to do this to make sure the token is valid
         if (!(await this.validateToken(true))) {

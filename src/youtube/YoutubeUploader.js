@@ -65,7 +65,7 @@ module.exports = class YoutubeUploader {
     }
 
     async authorize(twitchLogin) {
-        const credentials = JSON.parse(fs.readFileSync(`./data/client_secrets.json`));
+        const credentials = JSON.parse(fs.readFileSync(`${config.paths.data}/client_secrets.json`));
 
         const oauth2Client = new OAuth2(
             credentials.web.client_id,
@@ -74,18 +74,18 @@ module.exports = class YoutubeUploader {
         );
 
         try {
-            const oldToken = (await fs.promises.readFile(`./data/${twitchLogin}.client_oauth_token.json`)).toString();
+            const oldToken = (await fs.promises.readFile(`${config.paths.data}/${twitchLogin}.client_oauth_token.json`)).toString();
 
             oauth2Client.setCredentials(JSON.parse(oldToken));
             const tokens = await oauth2Client.refreshAccessToken();
-            fs.writeFileSync(`./data/${twitchLogin}.client_oauth_token.json`, JSON.stringify(tokens.credentials, null, 4));
+            fs.writeFileSync(`${config.paths.data}/${twitchLogin}.client_oauth_token.json`, JSON.stringify(tokens.credentials, null, 4));
 
             return oauth2Client;
         } catch (e) {
             console.error(e.stack);
             try {
                 const tokens = await oauth2Client.refreshAccessToken();
-                fs.writeFileSync(`./data/${twitchLogin}.client_oauth_token.json`, JSON.stringify(tokens.credentials, null, 4));
+                fs.writeFileSync(`${config.paths.data}/${twitchLogin}.client_oauth_token.json`, JSON.stringify(tokens.credentials, null, 4));
             } catch (e2) {
                 await this.getNewToken(twitchLogin, oauth2Client);
             }
@@ -122,7 +122,7 @@ module.exports = class YoutubeUploader {
                     const token = await oauth2Client.getToken(code);
 
                     oauth2Client.setCredentials(token.tokens);
-                    fs.writeFileSync(`./data/${twitchLogin}.client_oauth_token.json`, JSON.stringify(token.tokens, null, 4));
+                    fs.writeFileSync(`${config.paths.data}/${twitchLogin}.client_oauth_token.json`, JSON.stringify(token.tokens, null, 4));
 
                     resolve(token);
                 } catch (e) {

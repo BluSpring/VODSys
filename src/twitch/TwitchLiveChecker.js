@@ -3,6 +3,7 @@ const { EventEmitter } = require('events');
 const fs = require('fs');
 const Logger = require('../util/Logger');
 const TwitchRest = require('./TwitchRest');
+const config = require('../../data/config.json');
 
 const logger = new Logger('TwitchLiveChecker');
 
@@ -19,7 +20,7 @@ module.exports = class TwitchLiveChecker extends EventEmitter {
      * @returns {string[]}
      */
     static getCachedLiveStreams() {
-        const file = './data/live.json';
+        const file = `${config.paths.data}/live.json`;
 
         if (fs.existsSync(file)) {
             const data = fs.readFileSync(file);
@@ -58,7 +59,7 @@ module.exports = class TwitchLiveChecker extends EventEmitter {
         }
 
         TwitchLiveChecker.live = TwitchLiveChecker.live.filter(a => livePeople.includes(a));
-        fs.writeFileSync('./data/live.json', JSON.stringify(TwitchLiveChecker.live, null, 4));
+        fs.writeFileSync(`${config.paths.data}/live.json`, JSON.stringify(TwitchLiveChecker.live, null, 4));
     }
 
     static async streamData() {

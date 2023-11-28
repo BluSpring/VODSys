@@ -40,7 +40,7 @@ async function refreshGoogleTokens(channel, attempts = 0) {
     const authClient = (await uploader.authorize(channel.login));
 
     authClient.on('tokens', (tokens) => {
-        fs.writeFileSync(`./data/${channel.login}.client_oauth_token.json`, JSON.stringify(tokens, null, 4));
+        fs.writeFileSync(`${config.paths.data}/${channel.login}.client_oauth_token.json`, JSON.stringify(tokens, null, 4));
     });
 
     try {

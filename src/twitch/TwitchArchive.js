@@ -4,6 +4,7 @@ const { VideoDownloader } = require('twitch-video-downloader');
 const fs = require('fs');
 const Logger = require("../util/Logger");
 const path = require('path');
+const config = require('../../data/config.json');
 
 const logger = new Logger('TwitchArchive');
 
@@ -18,19 +19,19 @@ module.exports = class TwitchArchive extends EventEmitter {
      *  uploading: {id: string, login: string, title: string, description: string, path: string}[]
      * }}
      */
-    static videoData = fs.existsSync('./data/videos.json') ? require('../../data/videos.json') : {
+    static videoData = fs.existsSync(`${config.paths.data}/videos.json`) ? require(path.resolve(`${config.paths.data}/videos.json`)) : {
         uploaded: [],
         uploading: []
     };
 
     static saveVideoData() {
-        fs.writeFileSync('./data/videos.json', JSON.stringify(TwitchArchive.videoData, null, 4));
+        fs.writeFileSync(`${config.paths.data}/videos.json`, JSON.stringify(TwitchArchive.videoData, null, 4));
     }
 
     constructor(channel) {
         super();
         this.channel = channel;
-        this.description = fs.existsSync(`./data/${this.channel.login}.description.txt`) ? fs.readFileSync(`./data/${this.channel.login}.description.txt`).toString() : `uploading using VODSys\nhttps://github.com/BluSpring/VODSys`;
+        this.description = fs.existsSync(`${config.paths.data}/${this.channel.login}.description.txt`) ? fs.readFileSync(`${config.paths.data}/${this.channel.login}.description.txt`).toString() : `uploaded using VODSys\nhttps://github.com/BluSpring/VODSys`;
     }
 
     async checkArchives() {
@@ -64,7 +65,7 @@ module.exports = class TwitchArchive extends EventEmitter {
 
         TwitchArchive.downloading.push(video.id);
 
-        const archiveFolder = `./data/archives/${this.channel.login}`;
+        const archiveFolder = `${config.paths.videos}/${this.channel.login}`;
 
         if (!fs.existsSync(archiveFolder))
             fs.mkdirSync(archiveFolder, { recursive: true });
