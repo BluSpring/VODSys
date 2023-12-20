@@ -92,7 +92,7 @@ module.exports = class TwitchArchive extends EventEmitter {
             .replace(/{twitchCategory}/g, '(unavailable due to Twitch not providing data)');
 
         if (title.length > 100) {
-            title = `${video.title.substr(0, title.length - 100 - ' - [ STREAM ARCHIVE ]'.length - 6)}... - [ STREAM ARCHIVE ]`;
+            title = `${video.title.substr(0, 100 - ' - [ STREAM ARCHIVE ]'.length - 3)}... - [ STREAM ARCHIVE ]`;
             description += `\nOriginal title: ${video.title}`;
         }
 
