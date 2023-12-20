@@ -7,9 +7,6 @@ const Logger = require('../util/Logger');
 const OAuth2 = google.auth.OAuth2;
 const path = require('path');
 
-// Category IDs: https://gist.github.com/dgp/1b24bf2961521bd75d6c
-const category = 20; // Gaming
-
 const SCOPES = ['https://www.googleapis.com/auth/youtube.upload', 'https://www.googleapis.com/auth/youtube'];
 
 const logger = new Logger('YoutubeUploader');
@@ -32,8 +29,8 @@ module.exports = class YoutubeUploader {
                     snippet: {
                         title: data.title,
                         description: data.description,
-                        tags: ['vod', 'twitch', 'stream', 'game'],
-                        categoryId: category,
+                        tags: config.youtube.tags ?? ['vod', 'twitch', 'stream', 'game'],
+                        categoryId: config.youtube.category ?? 20, // Gaming, from Category IDs: https://gist.github.com/dgp/1b24bf2961521bd75d6c
                         defaultLanguage: 'en',
                         defaultAudioLanguage: 'en'
                     },
