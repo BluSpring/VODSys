@@ -5,7 +5,9 @@
     },
     "youtube": {
         "client_id": "",
-        "client_secret": ""
+        "client_secret": "",
+        "tags": ["vod", "twitch", "stream", "game"],
+        "category": 20
     },
 
     "channels": [
